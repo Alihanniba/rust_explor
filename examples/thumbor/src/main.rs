@@ -24,6 +24,10 @@ use tracing::{info,instrument};
 mod pb;
 use pb::*;
 
+mod engine;
+use engine::{Engine,Photon};
+use image::ImageOutputFormat;
+
 #[derive(Deserialize)]
 struct Params {
     spec: String,
@@ -31,10 +35,6 @@ struct Params {
 }
 
 type Cache = Arc<Mutex<LruCache<u64, Bytes>>>;
-
-
-
-
 
 
 #[tokio::main]
@@ -76,6 +76,14 @@ async fn generate(Path(Params {spec,url}): Path<Params>) -> Result<(String, Stat
     let data = retrieve_image(&url, cache)
                     .await
                     .map_err(|_| StatusCode::BAD_REQUEST)?;
+
+    let mut engine: Photon = data.try_into()
+                                .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+                            
+    engine.apply(&spec.specs);
+
+    let image = engine.generate(ImageOutputFormat::Jpeg(85));
+    info!("Finished processing: image size {}", image.len());
 
     let mut headers = HeaderMap::new();
     headers.insert("content-type", HeaderValue::from_static("image/jpeg"));
