@@ -1,0 +1,29 @@
+[package]
+name = "thumbor"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum="0.7.2" #web服务器
+anyhow = "1" #错误处理
+base64 = "0.21.5" #base64
+bytes = "1"#处理字节流
+image = "0.24.7" #处理图片
+lazy_static = "1"#通过宏更方便的初始化静态变量
+lru = "0.12.1" #LRU缓存
+percent-encoding = "2"
+photon-rs="0.3"
+prost="0.12.3"
+reqwest="0.11"
+serde={version = "1", features = ["derive"]}
+tokio={version = "1",features = ["full"]} #异步处理
+tower={version = "0.4", features = ["util", "timeout", "load-shed", "limit"]} #服务处理中间件
+tower-http = {version = "0.5.0", features = ["add-extension", "compression-full", "trace"]} #http服务处理中间件
+tracing = "0.1"
+tracing-subscriber="0.3.18"
+prost-build = "0.12.3"
+
+[build-dependencies]
+prost-build="0.12.3"
